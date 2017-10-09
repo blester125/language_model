@@ -1,0 +1,4 @@
+data/*
+tied_words.py
+__pycache__/*
+models/*
