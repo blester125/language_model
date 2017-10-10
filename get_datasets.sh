@@ -1,4 +1,4 @@
-o "=== Acquiring datasets ==="
+echo "=== Acquiring datasets ==="
 echo "---"
 mkdir -p data
 cd data
