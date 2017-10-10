@@ -16,7 +16,7 @@ lstm_out = 256
 char_lstm_out = embedding_size // 2
 
 learning_rate = 0.001
-num_epochs = 10
+num_epochs = 5
 
 class Vocab:
     def __init__(self, corpus):
@@ -57,9 +57,10 @@ word_vocab = Vocab(chain(*train_data))
 char_vocab = Vocab(chars)
 
 
-def train(trainer, forward, num_epochs):
+def train(model, trainer, forward, num_epochs, save_name):
     train_words = 0
     train_loss = 0
+    min_dev_loss = 1000
     for epoch in range(num_epochs):
         random.shuffle(train_data)
         for i, sentence in enumerate(train_data, 1):
@@ -76,6 +77,9 @@ def train(trainer, forward, num_epochs):
                     dev_loss += loss_exp.scalar_value()
                     dev_words += len(dev_sentence)
                 print("Dev Perplexity: {:.4f}".format(np.exp(dev_loss / dev_words)))
+                if min_dev_loss > (dev_loss / dev_words):
+                    min_dev_loss = (dev_loss / dev_words)
+                    model.save(save_name + str(epoch) + "_" + str(i))
 
             loss_exp = forward(sentence)
             train_loss += loss_exp.scalar_value()
@@ -90,3 +94,6 @@ def train(trainer, forward, num_epochs):
         test_loss += loss_exp.scalar_value()
         test_words += len(test_sentence)
     print("Test Perplexity: {:.4f}".format(np.exp(test_loss / test_words)))
+
+def count_params(param_list):
+    return sum(np.prod(p.shape()) for p in param_list)

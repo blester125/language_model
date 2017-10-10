@@ -15,6 +15,7 @@ from utils import lstm_out
 from utils import num_layers
 from utils import num_epochs
 from utils import learning_rate
+from utils import count_params
 
 num_chars = len(char_vocab)
 num_words = len(word_vocab)
@@ -37,7 +38,7 @@ params = [CHAR_EMBEDDING_MATRIX, softmax_w, softmax_b]
 params.extend(*word_lstm.get_parameters())
 params.extend(*char_fw_lstm.get_parameters())
 params.extend(*char_bw_lstm.get_parameters())
-print("Number of Params: {}".format(sum(np.prod(p.shape()) for p in params)))
+print("Number of Params: {}".format(count_params(params)))
 
 def word_rep(word, fw_init, bw_init):
     pad = char_vocab.get('<*>')
@@ -70,4 +71,4 @@ def calc_lm_loss(words):
         s = s.add_input(word_emb)
     return dy.esum(losses)
 
-train(trainer, calc_lm_loss, num_epochs)
+train(model, trainer, calc_lm_loss, num_epochs, "models/compositional")

@@ -12,6 +12,7 @@ from utils import lstm_out
 from utils import num_layers
 from utils import num_epochs
 from utils import learning_rate
+from utils import count_params
 
 num_words = len(word_vocab)
 
@@ -29,7 +30,7 @@ softmax_b = model.add_parameters((num_words))
 
 params = [EMBEDDING_MATRIX, softmax_w, softmax_b]
 params.extend(*lstm.get_parameters())
-print("Number of Params: {}".format(sum(np.prod(p.shape()) for p in params)))
+print("Number of Params: {}".format(count_params(params)))
 
 def calc_lm_loss(words):
     dy.renew_cg()
@@ -51,4 +52,4 @@ def calc_lm_loss(words):
         s = s.add_input(EMBEDDING_MATRIX[word_id])
     return dy.esum(losses)
 
-train(trainer, calc_lm_loss, num_epochs)
+train(model, trainer, calc_lm_loss, num_epochs, "models/word")
